@@ -16,6 +16,6 @@ spring:
       hibernate:
         column_ordering_strategy: legacy
         jdbc:
-#          time_zone: UTC
+          time_zone: UTC
     hibernate:
 #      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
