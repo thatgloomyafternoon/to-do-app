@@ -18,4 +18,4 @@ spring:
         jdbc:
           time_zone: UTC
     hibernate:
-#      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
