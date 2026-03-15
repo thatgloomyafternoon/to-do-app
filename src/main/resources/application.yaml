@@ -11,7 +11,7 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
-#    open-in-view: false
+    open-in-view: false
     properties:
       hibernate:
 #        column_ordering_strategy: legacy
