@@ -14,7 +14,7 @@ spring:
     open-in-view: false
     properties:
       hibernate:
-#        column_ordering_strategy: legacy
+        column_ordering_strategy: legacy
         jdbc:
 #          time_zone: UTC
     hibernate:
