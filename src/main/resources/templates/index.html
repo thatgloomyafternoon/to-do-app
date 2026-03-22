@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do App</title>
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.1.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/site.css}" />
+     <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}" />
+  </head>
+  <body>
+    <div class="container mt-4">
+      <header>
+        <h2><b>To-Do App</b></h2>
+      </header>
+      <br>
+      <main>
+        <div class="row">
+          <div class="col-md-2">
+            <button class="my-button w-100" th:attr="onclick=|showModal('my-modal-to-do')|">+ New To-Do</button>
+          </div>
+          <div class="col-md-2">
+            <button class="my-button w-100" th:attr="onclick=|showModal('my-modal-tag')|">+ New Tag</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table>
+              <thead>
+                <th>Created At</th>
+                <th>Finished At</th>
+                <th>Tag</th>
+                <th>Task</th>
+                <th>Actions</th>
+              </thead>
+              <tbody>
+                <tr th:each="todo : ${todos}">
+                  <td id="todo-id" th:text="${todo.getId()}" style="display: none"></td>
+                  <td th:text="${todo.getCreatedAt()}"></td>
+                  <td th:text="${todo.getFinishedAt()}"></td>
+                  <td th:text="${todo.getTag()}"></td>
+                  <td th:text="${todo.getTask()}"></td>
+                  <td>
+                    <button class="my-blue-action-button" th:attr="onclick=|viewToDo()|"><i class="fa fa-pencil-square-o"></i></button>
+                    <button class="my-green-action-button" th:attr="onclick=|finishToDo()|"><i class="fa fa-check-square-o"></i></button>
+                    <button class="my-red-action-button" th:attr="onclick=|deleteToDo()|"><i class="fa fa-trash"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+      <!-- my-modal-to-do -->
+      <div id="my-modal-to-do" class="my-modal">
+        <div class="my-modal-content">
+          <div class="my-modal-header">
+            <h4 class="mb-0">Create New To-Do</h4>
+          </div>
+          <div class="my-modal-body">
+            <p>
+              <label><b>Tag</b></label><br>
+              <select id="my-tag-dropdown" class="w-100">
+                <option value="0">Select Tag</option>
+                <option th:each="tag : ${tags}" th:value="${tag.getId()}" th:text="${tag.getName()}"></option>
+              </select><br>
+            </p>
+            <p>
+              <label><b>Task</b></label><br>
+              <button th:attr="onclick=|addEmoji('my-textarea')|">&#9989;</button>
+              <textarea id="my-textarea" class="my-textarea" placeholder="Put some details regarding the task..." maxlength="1000" cols="50" rows="10"></textarea>
+            </p>
+            <p id="create-todo-error" class="create-todo-error"></p>
+            <div class="row">
+              <div class="col-md-2">
+                <button class="btn btn-primary" type="button" th:attr="onclick=|createNewToDo()|">Save</button>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-danger" type="button" th:attr="onclick=|closeModal('my-modal-to-do')|">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- my-modal-tag -->
+      <div id="my-modal-tag" class="my-modal">
+        <div class="my-modal-content">
+          <div class="my-modal-header">
+            <h4 class="mb-0">Create New Tag</h4>
+          </div>
+          <div class="my-modal-body">
+            <p>
+              <label><b>Tag</b></label><br>
+              <input id="my-tag-name" class="w-100" type="text" placeholder="Enter tag name..." />
+            </p>
+            <p id="create-tag-error" class="create-tag-error">
+            </p>
+            <div class="row">
+              <div class="col-md-2">
+                <button class="btn btn-primary" type="button" th:attr="onclick=|createNewTag()|">Save</button>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-danger" type="button" th:attr="onclick=|closeModal('my-modal-tag')|">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- my-modal-to-do-update -->
+      <div id="my-modal-to-do-update" class="my-modal">
+        <div class="my-modal-content">
+          <div class="my-modal-header">
+            <h4 class="mb-0">Update To-Do</h4>
+          </div>
+          <div class="my-modal-body">
+            <p>
+              <label><b>Tag</b></label><br>
+              <select id="my-tag-dropdown-update" class="w-100">
+                <option value="0">Select Tag</option>
+                <option th:each="tag : ${tags}" th:value="${tag.getId()}" th:text="${tag.getName()}"></option>
+              </select><br>
+            </p>
+            <p>
+              <label><b>Task</b></label><br>
+              <button th:attr="onclick=|addEmoji('my-textarea-update')|">&#9989;</button>
+              <textarea id="my-textarea-update" class="my-textarea" placeholder="Put some details regarding the task..." maxlength="1000" cols="50" rows="10"></textarea>
+            </p>
+            <p id="update-todo-error" class="create-todo-error"></p>
+            <div class="row">
+              <div class="col-md-2">
+                <button id="update-button" class="btn btn-primary" type="button" onclick="updateToDo()">Update</button>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-danger" type="button" th:attr="onclick=|closeModal('my-modal-to-do-update')|">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  function addEmoji(textArea) {
+    var cursorPos = $('#' + textArea).prop('selectionStart');
+    var v = $('#' + textArea).val();
+    var textBefore = v.substring(0, cursorPos);
+    var textAfter  = v.substring(cursorPos, v.length);
+    $('#' + textArea).val(textBefore + "\u2705" + textAfter);
+  }
+
+  function showModal(modalName) {
+    var myModal = $("#" + modalName)[0];
+    myModal.style.display = "block";
+  }
+
+  function closeModal(modalName) {
+    $("#" + modalName)[0].style.display = 'none';
+    $("#my-tag-dropdown").val('0');
+    $("#my-textarea").val('');
+    $("#my-tag-name").val('');
+    $("#create-tag-error")[0].innerText = '';
+    $("#create-todo-error")[0].innerText = '';
+    $("#update-todo-error")[0].innerText = '';
+  }
+
+  function createNewTag() {
+    $.ajax({
+      type: "POST",
+      url: "/tag/create",
+      headers: null,
+      data: JSON.stringify({name: $("#my-tag-name").val()}),
+      contentType: "application/json; charset=utf-8",
+      success: function(response, status, xhr) {
+        if(xhr.status == 200) {
+          $("#create-tag-error")[0].innerText = '';
+          window.location = "/";
+        }
+      },
+      error: function(xhr) {
+        var json = JSON.parse(xhr.responseText);
+        $("#create-tag-error")[0].innerText = json.message;
+      }
+    });
+  }
+
+  function createNewToDo() {
+    var _tagId = $("#my-tag-dropdown").val();
+    var _task = $("#my-textarea").val();
+    $.ajax({
+      type: "POST",
+      url: "/todo/create",
+      headers: null,
+      data: JSON.stringify({tagId: _tagId, task: _task}),
+      contentType: "application/json; charset=utf-8",
+      success: function(response, status, xhr) {
+        if(xhr.status == 200) {
+          $("#create-todo-error")[0].innerText = '';
+          window.location = "/";
+        }
+      },
+      error: function(xhr) {
+        var _json = JSON.parse(xhr.responseText);
+        $("#create-todo-error")[0].innerText = _json.message;
+      }
+    });
+  }
+
+  function viewToDo() {
+    var toDoId = $("table > tbody > tr:hover").find("td#todo-id").text();
+    $.ajax({
+      type: "GET",
+      url: "/todo/view?id=" + toDoId,
+      headers: null,
+      data: null,
+      contentType: "application/json; charset=utf-8",
+      success: function(response, status, xhr) {
+        if(xhr.status == 200) {
+          var _json = JSON.parse(xhr.responseText);
+          $("#my-tag-dropdown-update").val(_json.tag.id).change();
+          $("#my-textarea-update").val(_json.task);
+          $("#update-button").attr("onclick", "updateToDo('" + toDoId + "')");
+        }
+      },
+      error: function(xhr) {
+        var json = JSON.parse(xhr.responseText);
+        $("#update-todo-error")[0].innerText = json.message;
+      }
+    });
+    showModal('my-modal-to-do-update');
+  }
+
+  function updateToDo(_toDoId) {
+    var _tagId = $("#my-tag-dropdown-update").val();
+    var _task = $("#my-textarea-update").val();
+    $.ajax({
+      type: "PATCH",
+      url: "/todo/update",
+      headers: null,
+      data: JSON.stringify({toDoId: _toDoId, tagId: _tagId, task: _task}),
+      contentType: "application/json; charset=utf-8",
+      success: function(response, status, xhr) {
+        if(xhr.status == 200) {
+          $("#update-todo-error")[0].innerText = '';
+          window.location = "/";
+        }
+      },
+      error: function(xhr) {
+        var json = JSON.parse(xhr.responseText);
+        $("#update-todo-error")[0].innerText = json.message;
+      }
+    });
+  }
+
+  function finishToDo() {
+    var _toDoId = $("table > tbody > tr:hover").find("td#todo-id").text();
+    if(confirm("Finish ToDo?") == true) {
+      $.ajax({
+        type: "PATCH",
+        url: "/todo/finish",
+        headers: null,
+        data: JSON.stringify({toDoId: _toDoId}),
+        contentType: "application/json; charset=utf-8",
+        success: function(response, status, xhr) {
+          if(xhr.status == 200) {
+            window.location = "/";
+          }
+        },
+        error: function(xhr) {
+          var json = JSON.parse(xhr.responseText);
+          alert(json.message);
+        }
+      });
+    }
+  }
+
+  function deleteToDo() {
+    var _toDoId = $("table > tbody > tr:hover").find("td#todo-id").text();
+    if(confirm("Delete ToDo?") == true) {
+      $.ajax({
+        type: "DELETE",
+        url: "/todo/delete",
+        headers: null,
+        data: JSON.stringify({toDoId: _toDoId}),
+        contentType: "application/json; charset=utf-8",
+        success: function(response, status, xhr) {
+          if(xhr.status == 200) {
+            window.location = "/";
+          }
+        },
+        error: function(xhr) {
+          var json = JSON.parse(xhr.responseText);
+          alert(json.message);
+        }
+      });
+    }
+  }
+</script>
