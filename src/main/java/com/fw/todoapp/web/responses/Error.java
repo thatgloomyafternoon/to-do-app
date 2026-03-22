@@ -1,4 +1,4 @@
-//package com.fw.todoapp.web.responses;
+package com.fw.todoapp.web.responses;
 //
 //public class Error {
 //
